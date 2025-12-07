@@ -3,9 +3,7 @@ export const DEFAULT_MAX_TOKENS = 2000;
 export const DEFAULT_MAX_ITERATIONS = 50;
 
 export const THINKING_MODELS = [
-  'o1-preview',
-  'o1-mini',
-  'o3-mini',
+  'gpt-4.1-mini',
   'gpt-oss',
 ] as const;
 

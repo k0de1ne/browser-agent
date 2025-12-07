@@ -34,21 +34,21 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'get_page_content',
-      description: 'Retrieve interactive elements from the current page. Returns a list of elements with unique IDs that can be used for clicking or typing. Elements are grouped by viewport visibility (visible elements shown first). Use this to discover what actions are available on the page.',
+      description: 'Discover elements on the current page. Returns ALL potentially relevant elements with unique IDs for interaction. You must analyze the results and decide which elements are useful for your task. Elements are grouped by viewport visibility. Use this to understand what\'s available on the page and make intelligent decisions about what to interact with.',
       parameters: {
         type: 'object',
         properties: {
           selector: {
             type: 'string',
-            description: 'Optional CSS selector to filter elements. Examples: "button" (all buttons), "input[type=text]" (text inputs), ".navigation a" (links in navigation). Omit to get all interactive elements.',
+            description: 'CSS selector to target specific elements. You decide what selector to use based on your task. Examples: "button" for buttons, "input" for form fields, "a[href*=\'cart\']" for cart links, "[data-testid]" for test elements. Be creative and adaptive.',
           },
           text_contains: {
             type: 'string',
-            description: 'Optional text filter - returns only elements whose visible text contains this string (case-insensitive, works across languages)',
+            description: 'Filter elements by their text content. Use this to find elements with specific text. Case-insensitive partial matching.',
           },
           max_elements: {
             type: 'number',
-            description: 'Maximum number of elements to return (default: 50). Increase if you need to see more options.',
+            description: 'Maximum elements to return (default: 50). Adjust based on page complexity and your needs.',
           },
         },
         required: [],
@@ -59,25 +59,25 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'find_element',
-      description: 'Find a single specific element using various search criteria. Returns the first matching element with an ID for interaction. More precise than get_page_content when you know exactly what you\'re looking for.',
+      description: 'Find a specific element using YOUR chosen search criteria. You decide the best way to locate elements based on the page structure and your task. Returns the first matching element with an ID for interaction.',
       parameters: {
         type: 'object',
         properties: {
           selector: {
             type: 'string',
-            description: 'Optional CSS selector for precise targeting. Examples: "button.primary", "input#email", "a[href*=\\"checkout\\"]"',
+            description: 'CSS selector YOU design based on page analysis. Be creative: "button[class*=\'primary\']", "input[placeholder*=\'email\']", "a[href*=\'checkout\']", "[data-testid*=\'submit\']"',
           },
           text: {
             type: 'string',
-            description: 'Optional text content to search for within elements (partial match, case-insensitive). Example: "submit" matches "Submit Form"',
+            description: 'Search for elements containing this text. Use partial matches like "search" to find "Search Button", "Search Form", etc.',
           },
           attribute: {
             type: 'string',
-            description: 'Optional attribute name to filter by. Common attributes: "href", "type", "class", "id", "data-*", "aria-label"',
+            description: 'Filter by ANY attribute name. You choose: "href", "type", "class", "id", "data-testid", "aria-label", "role", etc.',
           },
           attribute_value: {
             type: 'string',
-            description: 'Required value for the specified attribute (supports partial matching). Used together with "attribute" parameter.',
+            description: 'Value pattern for the chosen attribute. Supports partial matching. Use with "attribute" parameter.',
           },
         },
         required: [],

@@ -143,57 +143,44 @@ export class DOMExtractor {
       if (filterParam.selectors) {
         selector = filterParam.selectors;
       } else {
-        const interactiveSelectors = [
-          'a[href]',
-          'button',
-          'input',
-          'textarea',
-          'select',
-          '[role="button"]',
-          '[role="link"]',
-          '[role="checkbox"]',
-          '[role="radio"]',
-          '[role="tab"]',
-          '[role="menuitem"]',
-          '[onclick]',
-          '[tabindex]',
-          'summary',
-        ];
-        
-        const semanticSelectors = filterParam.includeSemanticStructure !== false ? [
-          'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-          'nav',
-          'main',
-          'article',
-          'section',
-          'header',
-          'footer',
-          '[role="navigation"]',
-          '[role="main"]',
-          '[role="banner"]',
-          '[role="complementary"]',
-        ] : [];
-        
-        selector = [...interactiveSelectors, ...semanticSelectors].join(', ');
+        // Use a very broad selector to let LLM decide what's relevant
+        // No hardcoded assumptions about what elements are important
+        selector = '*';
       }
 
       const allElements = Array.from(document.querySelectorAll(selector));
 
-      let candidateElements = allElements;
-      if (!filterParam.includeHidden) {
-        candidateElements = allElements.filter((el) => {
-          const rect = el.getBoundingClientRect();
-          const style = window.getComputedStyle(el);
-          
-          return !(
+      // Let LLM decide what's relevant - just filter out obviously useless elements
+      let candidateElements = allElements.filter((el) => {
+        const rect = el.getBoundingClientRect();
+        const style = window.getComputedStyle(el);
+        
+        // Basic visibility filter only
+        if (!filterParam.includeHidden) {
+          if (
             rect.width === 0 ||
             rect.height === 0 ||
             style.display === 'none' ||
             style.visibility === 'hidden' ||
             style.opacity === '0'
-          );
-        });
-      }
+          ) {
+            return false;
+          }
+        }
+        
+        // Skip script/style tags and empty elements
+        const tagName = el.tagName.toLowerCase();
+        if (['script', 'style', 'noscript', 'meta', 'link'].includes(tagName)) {
+          return false;
+        }
+        
+        // Skip elements without any content or attributes unless they have potential
+        const hasText = el.textContent?.trim().length > 0;
+        const hasAttributes = el.attributes.length > 0;
+        const hasInteractivePotential = ['input', 'button', 'a', 'select', 'textarea'].includes(tagName);
+        
+        return hasText || hasAttributes || hasInteractivePotential;
+      });
 
       candidateElements.forEach((el) => {
         const elementData = extractElementData(el, idCounter++);
@@ -291,16 +278,14 @@ export class DOMExtractor {
         parts.push(`"${el.text}"`);
       }
 
-      const importantAttrs: string[] = [];
-      if (el.attributes.href) importantAttrs.push(`href="${el.attributes.href}"`);
-      if (el.attributes.type) importantAttrs.push(`type="${el.attributes.type}"`);
-      if (el.attributes.placeholder) importantAttrs.push(`placeholder="${el.attributes.placeholder}"`);
-      if (el.ariaLabel) importantAttrs.push(`aria-label="${el.ariaLabel}"`);
-      if (el.attributes.name) importantAttrs.push(`name="${el.attributes.name}"`);
-      if (el.attributes['data-testid']) importantAttrs.push(`testid="${el.attributes['data-testid']}"`);
+      // Show ALL attributes - let LLM decide what's important
+      const allAttrs: string[] = [];
+      Object.entries(el.attributes).forEach(([key, value]) => {
+        allAttrs.push(`${key}="${value}"`);
+      });
       
-      if (importantAttrs.length > 0) {
-        parts.push(`[${importantAttrs.join(', ')}]`);
+      if (allAttrs.length > 0) {
+        parts.push(`[${allAttrs.join(', ')}]`);
       }
 
       if (el.semanticContext) {

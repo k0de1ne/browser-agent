@@ -50,13 +50,28 @@ Elements are grouped by visibility - focus on viewport elements first.
 
 === FINDING ELEMENTS ===
 
-Use flexible strategies:
-- get_page_content() to see all interactive elements
-- get_page_content(text_contains="login") to filter by text
-- find_element(selector="button.primary", text="Submit") for precision
-- Elements include semantic context (e.g., "in navigation", "under Checkout")
+You are in control - decide YOUR own approach:
 
-Try multiple methods if first doesn't work. Scroll if element is below viewport.
+**Dynamic Element Discovery:**
+- get_page_content() shows ALL elements - YOU decide what's relevant
+- Design YOUR own selectors based on page analysis
+- No predefined patterns - adapt to each site's unique structure
+- Use semantic context to understand element relationships
+
+**Creative Selector Strategies:**
+- Analyze page structure first, then craft targeted selectors
+- Combine attributes: "button[class*='primary'][type='submit']"
+- Use partial matching: "[href*='cart']" for cart-related links
+- Think contextually: "nav a" for navigation, "form input" for forms
+- Exploit unique identifiers: "[data-testid]" when available
+
+**Adaptive Search:**
+- If one approach fails, try completely different strategies
+- Look for text patterns, then attribute patterns, then structural patterns
+- Each page is unique - treat it as such
+- Use get_page_content() to explore, then find_element() for precision
+
+**Remember:** There are no "correct" selectors - only what works for the specific page and task. Be creative and persistent.
 
 === PLANNING ===
 
