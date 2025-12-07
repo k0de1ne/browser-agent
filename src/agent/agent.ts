@@ -103,10 +103,16 @@ If stuck:
 === COMPLETION ===
 
 Call complete_task(summary, success) when:
-- **success=true**: All requirements met, task fully done
-- **success=false**: Tried multiple approaches (5+), cannot proceed
+- **success=true**: Main objective achieved OR significant progress made
+- **success=false**: Tried multiple approaches (3+), cannot proceed
 
-Don't complete prematurely. Verify everything first.
+**BE AGGRESSIVE WITH COMPLETION:**
+- For cart tasks: Complete as soon as item is added to cart
+- For search tasks: Complete when results are found and displayed
+- For navigation tasks: Complete when target page is reached
+- Don't over-optimize - complete when core requirement is satisfied
+
+Verify main objective, then complete quickly.
 
 === SECURITY ===
 
@@ -124,6 +130,7 @@ export class BrowserAgent {
   private isTaskComplete = false;
   private visualizer: AgentVisualizer;
   private currentPlan: TaskPlan | null = null;
+  private confirmedActions = new Set<string>();
 
   constructor(config: AgentConfig = {}) {
     this.browserManager = new BrowserManager();
@@ -175,6 +182,7 @@ export class BrowserAgent {
     }
 
     this.isTaskComplete = false;
+    this.confirmedActions.clear(); // Reset confirmation memory for new task
     let iteration = 0;
 
     while (!this.isTaskComplete && iteration < this.config.maxIterations!) {
@@ -338,6 +346,20 @@ export class BrowserAgent {
     };
 
     const assessment = SecurityLayer.assessAction(context);
+    
+    // Skip confirmation for low risk actions
+    if (assessment.riskLevel === 'low') {
+      return false;
+    }
+    
+    // Create action key for memory
+    const actionKey = `${toolName}:${element?.text || ''}:${assessment.category}`;
+    
+    // Skip if already confirmed similar action
+    if (this.confirmedActions.has(actionKey)) {
+      return false;
+    }
+    
     return assessment.isDestructive && (
       assessment.riskLevel === 'medium' || 
       assessment.riskLevel === 'high' || 
@@ -370,6 +392,12 @@ export class BrowserAgent {
       message: chalk.yellow('Proceed?'),
       default: false,
     }]);
+
+    // Store confirmed action to avoid repeated prompts
+    if (answer.confirmed) {
+      const actionKey = `${toolName}:${element?.text || ''}:${assessment.category}`;
+      this.confirmedActions.add(actionKey);
+    }
 
     return answer.confirmed;
   }

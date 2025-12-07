@@ -5,7 +5,7 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'navigate',
-      description: 'Navigate to a specific URL. This is typically the first step in any web automation task. After navigation, the page may take time to load - consider using wait() if needed.',
+      description: 'Navigate to a specific URL. Use wait() after navigation if page needs time to load.',
       parameters: {
         type: 'object',
         properties: {
@@ -22,7 +22,7 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'get_page_structure',
-      description: 'Get a high-level overview of the page structure (headings, navigation, main sections, forms). Use this FIRST when arriving at a new page to understand the layout before looking for specific elements. This helps you orient yourself and find the right section of the page.',
+      description: 'Get page structure overview (headings, navigation, sections, forms). Use FIRST on new pages to understand layout.',
       parameters: {
         type: 'object',
         properties: {},
@@ -34,7 +34,7 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'get_page_content',
-      description: 'Discover elements on the current page. Returns ALL potentially relevant elements with unique IDs for interaction. You must analyze the results and decide which elements are useful for your task. Elements are grouped by viewport visibility. Use this to understand what\'s available on the page and make intelligent decisions about what to interact with.',
+      description: 'Discover all interactive elements with unique IDs. Elements grouped by viewport visibility. Analyze results to choose relevant elements for your task.',
       parameters: {
         type: 'object',
         properties: {
@@ -59,13 +59,13 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'find_element',
-      description: 'Find a specific element using YOUR chosen search criteria. You decide the best way to locate elements based on the page structure and your task. Returns the first matching element with an ID for interaction.',
+      description: 'Find specific element using your chosen search criteria. Returns first matching element with ID for interaction.',
       parameters: {
         type: 'object',
         properties: {
           selector: {
             type: 'string',
-            description: 'CSS selector YOU design based on page analysis. Be creative: "button[class*=\'primary\']", "input[placeholder*=\'email\']", "a[href*=\'checkout\']", "[data-testid*=\'submit\']"',
+            description: 'CSS selector you design based on page analysis. Examples: "button[class*=\'primary\']", "input[placeholder*=\'email\']", "a[href*=\'checkout\']"',
           },
           text: {
             type: 'string',
@@ -73,7 +73,7 @@ export const browserTools: ToolDefinition[] = [
           },
           attribute: {
             type: 'string',
-            description: 'Filter by ANY attribute name. You choose: "href", "type", "class", "id", "data-testid", "aria-label", "role", etc.',
+            description: 'Filter by any attribute name: "href", "type", "class", "id", "data-testid", "aria-label", "role", etc.',
           },
           attribute_value: {
             type: 'string',
@@ -143,7 +143,7 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'type_text',
-      description: 'Type text into an input field. The element must be an input, textarea, or other editable field. After typing, consider calling get_page_content to verify the page state, especially if pressing Enter triggers navigation or search.',
+      description: 'Type text into input field or textarea. Use get_page_content after typing if Enter triggers navigation/search.',
       parameters: {
         type: 'object',
         properties: {
@@ -312,13 +312,13 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'ask_user',
-      description: 'Request human assistance when automated solutions are insufficient. Use this as a last resort after exhausting automated approaches. Common scenarios: CAPTCHA challenges, authentication requirements, 2FA verification, ambiguous instructions, or manual interventions needed. The agent will pause and wait for user response.',
+      description: 'Request human assistance as last resort. Use for CAPTCHA, authentication, 2FA, or after exhausting automated approaches.',
       parameters: {
         type: 'object',
         properties: {
           question: {
             type: 'string',
-            description: 'Clear, specific question or instruction for the user. Be explicit about what action they need to take. Good: "Please enter the 6-digit code sent to your phone". Bad: "Need help".',
+            description: 'Clear, specific question for user. Be explicit about required action. Example: "Please enter the 6-digit code sent to your phone"',
           },
           reason: {
             type: 'string',
@@ -333,7 +333,7 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'update_plan',
-      description: 'Create or update your execution plan for the current task. Use this to break down the task into specific steps, track progress, and adapt your strategy. Call this at the start of a task to create a plan, and whenever you need to update it based on new information or changed circumstances.',
+      description: 'Create or update execution plan. Break task into steps, track progress, adapt strategy. Use at task start and when strategy changes.',
       parameters: {
         type: 'object',
         properties: {
@@ -383,17 +383,17 @@ export const browserTools: ToolDefinition[] = [
     type: 'function',
     function: {
       name: 'complete_task',
-      description: 'Finalize the task and return results to the user. This marks the end of execution. Call this ONLY when: (1) ALL requirements of the original request are fulfilled and verified [success=true], OR (2) After exhausting all reasonable approaches (5+ different strategies) without success [success=false]. Never call this prematurely - ensure every step is complete.',
+      description: 'Finalize task and return results. Call ONLY when: (1) ALL requirements fulfilled and verified [success=true], OR (2) After exhausting 5+ approaches without success [success=false].',
       parameters: {
         type: 'object',
         properties: {
           summary: {
             type: 'string',
-            description: 'Comprehensive summary of execution. For success: list what was accomplished and any relevant results. For failure: describe what was attempted, what failed, and why. Be specific and informative.',
+            description: 'Execution summary. Success: list accomplishments and results. Failure: describe attempts, failures, and reasons.',
           },
           success: {
             type: 'boolean',
-            description: 'true = All requirements met, task fully completed. false = Task could not be completed despite multiple attempts. Set this accurately based on actual results, not intentions.',
+            description: 'true = All requirements met and completed. false = Task could not be completed despite multiple attempts.',
           },
         },
         required: ['summary', 'success'],

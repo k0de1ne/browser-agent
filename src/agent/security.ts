@@ -140,7 +140,7 @@ export class SecurityLayer {
     const sensitiveContexts = [
       { pattern: 'checkout', category: 'financial' as const, risk: 'high' as const },
       { pattern: 'payment', category: 'financial' as const, risk: 'critical' as const },
-      { pattern: 'cart', category: 'financial' as const, risk: 'medium' as const },
+      { pattern: 'cart', category: 'financial' as const, risk: 'low' as const },
       { pattern: 'billing', category: 'financial' as const, risk: 'high' as const },
       { pattern: 'delete', category: 'data_loss' as const, risk: 'high' as const },
       { pattern: 'settings', category: 'account' as const, risk: 'medium' as const },
