@@ -11,7 +11,7 @@
 **Филинов Федор Андреевич**
 
 - Telegram: [@zqdma](https://t.me/zqdma)
-- 2+ года опыта в разработке (Go, Python, DevOps)
+- 2+ года опыта в разработке (Go, DevOps, Системном администрировании)
 - Опыт создания ботов, мониторинговых систем, CI/CD пайплайнов
 
 ## О проекте
@@ -52,7 +52,7 @@ Delete all spam emails from Gmail inbox
 ### Установка
 
 ```bash
-git clone https://github.com/zqdma/browser-agent
+git clone https://github.com/k0de1ne/browser-agent
 cd browser-agent
 npm install
 ```
@@ -83,11 +83,7 @@ BROWSER_TIMEOUT=30000
 ### Запуск
 
 ```bash
-# Development
-npm run dev
-
-# Production
-npm run build && npm start
+npm run build && npm run start
 ```
 
 ## Реализованные требования
